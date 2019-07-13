@@ -1,0 +1,20 @@
+---
+title: First Post
+author: Colin Quirk
+date: '2019-06-16'
+slug: first-post
+categories: []
+tags: []
+---
+
+Here is R
+```{r}
+1+1
+```
+
+Here is python
+```{python}
+2+2
+```
+
+the end

@@ -1,0 +1,48 @@
+baseurl = "http://colinquirk.com"
+title = "Colin Quirk's Personal Website"
+author = "Colin Quirk"
+canonifyurls = true
+languagecode = "en-us"
+theme = "hugo-tanka"
+
+googleAnalytics = ""
+disqusShortname = ""
+disable_mathjax = false
+
+pygmentsstyle      = "vs"
+pygmentscodefences = true
+
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
+
+enableEmoji = true
+
+[permalinks]
+    post = "/:year/:month/:day/:slug/"
+
+[params]
+  sitename = "Colin Quirk"
+
+[[menu.main]]
+    name = "About"
+    url = "/about"
+    weight = 1
+[[menu.main]]
+    name = "Github"
+    url = "http://github.com/colinquirk"
+    weight = 2
+[[menu.main]]
+    name = "Twitter"
+    url = "http://twitter.com/colintquirk"
+    weight = 3
+[[menu.main]]
+    name = "OSF"
+    url = "http://osf.io/b3esa/"
+    weight = 4
+[[menu.main]]
+    name = "CV"
+    url = "/quirk_cv.pdf"
+    weight = 5
+[[menu.main]]
+    name = "Email me"
+    url = "mailto:cquirk@uchicago.edu"
+    weight = 6

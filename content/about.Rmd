@@ -1,0 +1,28 @@
+---
+title: About Me
+author: Colin Quirk
+date: '2019-06-15'
+slug: about
+categories: []
+tags: []
+---
+
+## Who are you?
+My name is Colin Quirk and I'm currently doing my PhD in Psychology in the Awh/Vogel lab at the University of Chicago.
+
+## What is your background?
+I received my BA in cognitive neuroscience from Hampshire College, where I worked in Jane Couperus's lab. This where I learned to do EEG research and gained an interest in visual working memory.
+
+After graduating, I worked as a lab manager in Caren Rotello's lab at UMASS Amherst. Together we worked on recognition memory using a combination of EEG, mTurk, and signal detection.
+
+## What do you do now?
+I started as a PhD student in August of 2016. Right now I'm interested in individual differences in working memory encoding.
+
+## What is this site for?
+This site is a platform for me to share some of the work I am doing, whether it's academic or just for fun. I hope that you can use it as a place to learn a bit about who I am and what I do. If you're interested, check back in to keep up-to-date about what I'm working on!
+
+## How can I contact you?
+Do you have a question? Want to get some of my data? Have feedback to share?
+
+The best way to contact me is by email (cquirk@uchicago.edu). If you want to all of my code and/or data I have a [github](http://github.com/colinquirk) and an [osf](osf.io/b3esa/). Follow my [twitter](twitter.com/colintquirk) if you want to know when I make a new post.
+
