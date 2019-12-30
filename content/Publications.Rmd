@@ -1,0 +1,25 @@
+---
+title: Publications
+author: Colin Quirk
+date: '2019-12-02'
+slug: publications
+categories: []
+tags: []
+---
+
+## Peer-Reviewed Publications
+
+Couperus, J. W., & Quirk, C. (2015). Visual search and the N2pc in children. Attention, Perception, & Psychophysics, 77(3), 768-776. ([PDF](papers/Couperus&Quirk_2015.pdf))
+
+## Conference Presentations
+
+Quirk, C., Adam, K., Vogel, E. (May 2018). Preexisting spatial biases influence the encoding of information in visual working memory. Talk given at the 18th Annual Meeting of the Visual Sciences Society, St. Pete Beach, FL. ([SLIDES](slides/QuirkVSS2018.pdf))
+
+## Conference Posters
+
+Quirk, C., Chen, A., Vogel, E. (May 2019). Spatial Biases in Visual Working Memory Encoding Persist Despite Controlled Gaze Position. Poster session presentation at the 19th Annual Meeting of the Vision Sciences Society, St. Pete Beach, FL. ([PDF](posters/QuirkVSS2019.pdf))
+
+Lucero, C., Brookshire, G., Quirk, C., Goldin-Meadow, S., Vogel, E., Casasanto, D. (March 2018). Unconscious number discrimination in the human visual system. Poster session presentation at the 25th Annual Meeting of the Cognitive Neuroscience Society, Boston, MA.
+
+Quirk, C., Vogel, E. (May 2017). No Evidence for an Object Working Memory Capacity Benefit with Extended Viewing Time. Poster session presentation at the 17th Annual Meeting of the Vision Sciences Society, St. Pete Beach, FL. ([PDF](posters/QuirkVSS2017.pdf))
+
