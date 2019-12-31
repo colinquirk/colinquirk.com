@@ -1,0 +1,20 @@
+---
+title: "Deploying your Blogdown Site on Digital Ocean"
+author: Colin Quirk
+date: '2020-01-02'
+slug: blogdown-on-digitalocean
+categories: [random]
+tags: []
+---
+
+In this post I am going to talk about how I setup my blogdown site using Digital Ocean, but before I do that I'm going to talk about how I ended up deciding to use blogdown and why I picked Digital Ocean for hosting. If you want to skip over all that, scroll down to **Making your Own Site**.
+
+
+Until recently, my website has always been a repo for pdfs of my work (primary accessed by me) and a place for me to mess around with web technology. I first started my website while doing my grad school applications and, instead of just using a static site generator, I took the opportunity to practice my html and css skills by coding it all myself from scratch. The code wasn't very pretty, but the site ended up looking ok.
+
+<center>
+![](../post/blogdown-on-digitalocean/site-first-version.png){width=80%}
+</center>
+
+
+
