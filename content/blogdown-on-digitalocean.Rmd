@@ -1,0 +1,68 @@
+---
+title: "Deploying your Blogdown Site on Digital Ocean"
+author: Colin Quirk
+date: '2020-01-02'
+slug: blogdown-on-digitalocean
+categories: [random]
+tags: []
+---
+
+In this post I am going to talk about how I setup my blogdown site using Digital Ocean, but before I do that I'm going to talk about how I ended up deciding to use blogdown and why I picked Digital Ocean for hosting. If you want to skip over all that, scroll down to **Deploying your Own Site**.
+
+
+Until recently, my website has always been a repo for PDFs of my work (primary accessed by me) and a place for me to mess around with web technology. I first started my website while doing my grad school applications and, instead of just using a static site generator, I took the opportunity to practice my html and css skills by coding it all myself from scratch. The code wasn't very pretty, but the site ended up looking ok.
+
+<center>
+![](../post/blogdown-on-digitalocean/site-first-version.png){width=80%}
+</center>
+
+Then I realized I should probably learn a bit about backends and databases and all of that, so I created a new site from scratch that used flask on the backend (again, with custom html and css).
+
+<center>
+![](../post/blogdown-on-digitalocean/site-second-version.png){width=80%}
+</center>
+
+Because the new version of the site had a backend I was able to blog, but practically speaking it was too much to maintain. Plus, I had plans to add additionally functionality like a search bar that I never found the time to do. Now that I actually feel motivated to blog, I knew I'd have to move towards a simpler setup.
+
+## Why Blogdown
+
+While I wanted something more manageable, I still wanted complete control over all of my writing, which meant that I didn't want to use a third party service like medium. I also prefer to write code over using GUIs so other services like wordpress and squarespace were both out. That basically left me with a few popular open source projects that I could use to build the site.
+
+Probably the main contender other than blogdown was using github pages and Hugo. The main reason I wanted to use blogdown was because I am already very comfortable using RMarkdown files, whereas I've found the setup for building github pages sites locally to be a bit tricky. In contrast, I had blogdown running locally in just a few minutes. Blogdown also comes with some additional benefits if I write a post that includes code, as there is no distinction between my development environment and how I write my post. Finally, the code output comes for free. For example:
+
+```{r}
+rnorm(5)
+```
+
+
+## Deploying your Own Site
+
+I have always used digital ocean for hosting my site, but I did not see any tutorials online for how to integrate it with blogdown, hence why I have written this post. If you aren't sure where to deploy your site, you should definitely read through the [blogdown book](https://bookdown.org/yihui/blogdown/deployment.html) as there are free options. Digital ocean gives me full control of the build process and I've always found it easy to use, so I've decided to stick with it despite the $5 a month cost.
+
+If you don't know much about web technology, here are the major players that result in your site being up for the world to see:
+
+- **Blogdown** provides the "static" html files, images, etc. that you want to appear. It takes in your RMarkdown files and builds them into a website, which it outputs into a folder called `public`. Only this folder is actually needed for your website to function.
+- **Digital Ocean** is the host that runs the servers that display your website's content. It provides a basic linux environment that you need to configure to handle requests for your content.
+- **Nginx** is the software that handles requests and serves the static files created by blogdown.
+
+Additionally, you will probably want to register a domain name and set up your DNS records, but that's a bit outside the scope here. Luckily it's not too hard, so take a look at the [digital ocean docs](https://www.digitalocean.com/docs/networking/dns/how-to/add-domains/). I'm also going to assume that you have some blogdown site setup in a git repository somewhere. While it isn't strictly necessary, it will make the process of updating your site much easier. Once again, the [blogdown book](https://bookdown.org/yihui/blogdown/a-quick-example.html) has info about how to build your first site.
+
+### Setting Up your Droplet
+
+Step 1 is going to be creating your own droplet. To save some time, I used an [image](https://cloud.digitalocean.com/marketplace/5ca53ade3b7d246b5b29b1f0?i=c32e5d) that already comes with R and RMarkdown installed. You will then be led through some more choices about what plan you want which you can read about [here](https://www.digitalocean.com/docs/droplets/how-to/create/), though it shouldn't matter much for the purposes of this post.
+
+Once you have your droplet, you'll need to do some [basic setup](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-18-04) that results in a new user with sudo privilege (which you will now ssh into from now on) and a firewall. As root, install nginx (`apt-get install nginx`) and pandoc (`apt-get install pandoc`). Exit your current ssh session and log back into your newly created user. Start an interactive R session (by typing `R`) and install blogdown (`install.packages("blogdown")`) followed by hugo (`blogdown::install_hugo()`). That is all you need to do in terms of setting up blogdown!
+
+### Setting up Nginx
+
+Next you will need to set up Nginx. Luckily, digital ocean has plenty of docs on how to do this. To install Nginx [read this](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-18-04) including step 5 but excluding creating a sample index.html (instead we will just move our blogdown site over). (Note: I had a strange issue relating to a lock while testing for this post, if this happens to you, logging back into root and rebooting fixed it for me). Don't test your site just yet, as we still need to move your content to the nginx directory.
+
+### Building your Site
+
+Go ahead and navigate to your home directory (`cd ~`) or wherever you want your blogdown repo to be stored and use `git clone` to get it from whatever remote host you are using (e.g. github). Then cd into the new directory. In order to get the first version of your site up and running, we can manually build it with `Rscript -e 'blogdown::build_site()'` and move the files with `sudo cp -r public/. /var/www/html/`. If you've done everything correctly, you now should be able to see your site at your droplet's ip address! In the future you will want to instead use `cp -r public/. /var/www/example.com/html/` so that the info is correctly displayed for your chosen domain name. Once you have set up all the DNS records, your domain name should also show your site (but it make take a few hours or even days while the info fully propagates).
+
+Finally, you will probably want to set up some sort of build process so that you do not have to run these commands manually each time you update your site. Here is a link to [my build script](https://github.com/colinquirk/colinquirk.com/blob/master/build-site.sh) but of course you should put whatever you want here. I have setup this script to run with cron so that my site will update automatically at regular intervals. 
+
+## Conclusion
+
+Hopefully you found this tutorial to be useful! If you have any trouble or anything wasn't clear, feel free to reach out on twitter. Good luck!
