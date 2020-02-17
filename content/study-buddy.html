@@ -1,0 +1,32 @@
+---
+title: "Uncommon Hacks 2020: Building an App that Can Detect if you Stop Studying"
+author: Colin Quirk
+date: '2020-02-17'
+slug: study-buddy
+categories: [data science]
+tags: []
+---
+
+
+
+<p>This past weekend, my labmate Will Thyer and I entered into Uncommon Hacks 2020 at UChicago. We ended up picking up Edris Qarghah, another UChicago graduate student, at the event. Together, we had 24 hours to create an app that could use your webcam to detect if you stopped studying and play sounds to get you back on track. This was the first hackathon for all of us so we weren’t quite sure what to expect but it ended up being a lot of fun. This post will describe my experience, but if you are just interested in looking at our submission it is available <a href="https://devpost.com/software/study-buddy-cqj3zl">here</a> or you can check out the repo <a href="https://github.com/WilliamThyer/Study-Buddy">here</a>.</p>
+<p>Going into the event, Will and I knew we wanted to do some sort of classification task as it’s an area that we are both interested in. I’ve recently been doing a lot of deep learning in my day-to-day work, and we both agreed that something with computer vision would potentially make for a cool project. Still, we had no idea what sort of interesting computer vision app we could make using training data collected within one room. Once we started brainstorming about using the webcam, the idea came to us pretty quickly. I think we were drawn to the somewhat satirical nature of the app considering the environment it would be created in, so we committed to it early on day 1.</p>
+<p>While Will worked on the GUI interface, step 1 for me was learning how to use OpenCV to get images from the webcam. It was important to get this working ASAP, as this same process would be necessary in order to collect the training data for our model. A couple hours after start time I had the webcam saving images every second. I started getting as much data as I could of me in various states of inattention, including looking at my phone, looking away from the screen entirely, falling asleep, etc. These images, along with a similar number of me working normally, were then moved to google drive so that I could begin creating our model. It was around this time that Edris found us and we learned that he had been abandoned by his team. Luckily we needed someone to start on the annoying sounds that would be used to “encourage” the user to return to work so he quickly joined us and got started.</p>
+<p>We used <a href="http://fast.ai">fastai</a> which is built on type of pytorch and makes it easy to build CNNs for common image recognition tasks (as well as other deep learning tasks such as NLP)<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. Given this framework (and the power of Google Colab’s GPUs), I was able to get a model to 98% accuracy in just a few minutes. The issue I was running into was that I hadn’t built my own validation set, so I relied on fastai’s ability to randomly create one for me. With just 1 second between images, I was afraid our validation set was too similar to the training set and wouldn’t accurately detect an overfit model. I spent the next few hours creating my own validation set and tuning the model and found that, while the model was ok (~70% accurate), it was not doing as well as I had hoped.</p>
+<p>At this point, it was around 8pm and most of the core functionality of the app had been built. Will and Edris were waiting on me to provide the model so that we could start testing and fine tuning. Instead of continuing to play around with the model, I decided that we needed to at least get something working. Because we needed to classify an image every second, we wanted fastai to run locally. This meant getting fastai installed locally, which ended up being a bit more difficult than we expected. Still, at around 10pm we had our app running on Will’s laptop.</p>
+<p>At first it seemed like the model wasn’t working at all, which was probably to be expected given Will’s laptop had a different camera position and all the training data was of me. At this point, I went home to sleep and left Edris and Will to play around with the app. An hour later they had fixed some bugs and explored the idiosyncrasies of the app such that they were able to consistently get it working.</p>
+<p>On day 2, we had a few major goals:</p>
+<ol style="list-style-type: decimal">
+<li>Add in a screen when the app started in order to allow you to align your webcam.</li>
+<li>Plot some feedback at the end of your study session so that you can see when you failed to pay attention.</li>
+<li>Gather some more data and continue to improve the model.</li>
+</ol>
+<p>With only 3 hours left, we were only able to complete the first two of those goals, which certainly made us nervous. As it turned out, adding the webcam alignment actually made a huge difference in terms of accuracy, as it meant the input data was a lot cleaner. This was pretty uplifting and we went into judging confident. Looking back, I think that part of the issue with my crafted validation set was that I was testing on poses that I hadn’t done in any of the training data. In practice, our model ended up performing well enough when I trained on all of our data despite the originally concerning results.</p>
+<p>For the judges, we had a live demo where Will used the app while the judge listened to the sounds on headphones. All of the 6 judges except for one (who I think had the headphone cable in front of the webcam) got to see the app classifying perfectly. We had the result of each classification printing in our GUI and, other than that one judge, every single classification for 60 seconds was accurate.</p>
+<p>Given we had only started coding the app 24 hours previously, I think we were all happy with the result. Having an extra set of hands gave us the time needed to add some polish to the app on day 2, which I think made a big difference for how it demoed. Overall, I think we all had a great time and I would recommend anyone interested in doing a hackathon to go for it, even if you aren’t a bunch of undergrad CS majors or you aren’t sure what you want to make.</p>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>If you are interested in neural nets, I highly recommend fast.ai’s MOOC.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
