@@ -1,0 +1,62 @@
+---
+title: "Low Cost Tips for More Reproducible Workflows"
+author: Colin Quirk
+date: '2020-05-07'
+slug: reproducible-workflows
+categories: [research]
+tags: []
+---
+
+The idea of reproducible workflows has come up a few times for me recently, both in a student group that I run at UChicago (which deserves it's own post at some point) and as part of the UChicago ReproducibiliTea group organized by [Will Ngiam](https://twitter.com/will_ngiam). It's a topic that is very important to me because I spend a lot of time analyzing old data collected by other people. If researchers started adopting these practices it would personally save me quite a bit of time so I hope some of you will take this advice to heart.
+
+A lot of people have already talked about data management and best coding practices. The problem is that a lot of this advice is useful only with significant experience. Telling someone about the concept of DRY (don't repeat yourself) or showing them git is helpful to a point, but actually implementing these practices takes a certain level of programming ability that many new researchers don't have yet. My goal here is to talk about things that you can do today to organize yourself and improve your research practices.
+
+My overarching philosophy is that you should be organizing your work as if you were giving it to someone else to work through. While a nice side benefit of this is that you will eventually be able to share your work with others, the primary reason to adopt this philosophy is so that when you've forgotten everything about a project you'll be able to figure out how to recreate an analysis or figure from scratch. Unintuitively, the goal here is to avoid READMEs and note taking as much as possible by making things so easy to understand that they become mostly unnecessary. I will start at the highest level and work my way down to specific tips for data files and analysis code. 
+
+## File Management
+
+The most important idea related to file management is not necessarily how your files are organized, but that you are generally consistent for all of your projects. I have a python script that creates a new directory structure whenever I create a new project so that it is the exact same every time. Even if you are a brand new coder, you'll be able to create a script like this without too much trouble in whatever your preferred programming language is. When you adopt this strategy, you will always know where in your structure your raw data is, where your experiment code is, and where your figures are. While you should set up these directories however works best for you, I have found the following structure works well.
+
+At the highest level, I have a data directory with separate folders for different types of data (behavioral csvs, eye tracking files, etc).^[I prefer this to having all the data files within a directory for each subject as I usually perform operations on these files separately.] Importantly, there is a single directory where the "clean" data goes. However you set it up, there should be a clear separation between the raw data and the clean data. Eventually, your code should be set up to touch the raw data only a single time in a script which is dedicated to cleaning the data. All other analyses should use only the clean data. That is not to say your other scripts will not have any data manipulation in them, but any common operations (e.g. removing outliers) should eventually be handled all in one place so that it's easy to track.
+
+I also have an "exploration" folder where I put my RMarkdown files. These files are not designed to be final analyses; instead I use them to try things out. If an analysis ever becomes important enough to make it into a presentation or paper, the code will be refactored and moved to the formal analysis folder. However, it is simply too much work to do this for every single analysis before you've determined that analysis is actually interesting. Keeping the unimportant stuff in this folder makes it easier to find the important stuff later. That said, you may still want to look back at these analyses at some point in the future, so keep it somewhat organized with proper file names. Because I work with RMarkdown files, I generate a clean HTML output so that it is easy to search through them.
+
+The analysis folder is designed to be more organized than the exploration folder. When moving a script from the exploration folder to the analysis folder, I take the time to move any data cleaning processes to a single script so that I can simply read in the clean data.
+
+The last important folder is the figures folder, which contains both a scripts folder and an output folder. Usually I will create the code to generate the figure as part of an analysis script, before ultimately moving it to the scripts folder. Once I have the figure I usually am not interested in that code again, so this process helps keep the analysis scripts clean. 
+
+I don't attempt to create a perfect directory structure from the start. As science is an inherently exploratory process, it is impossible to know what analyses you run will end up being important. I feel the biggest barrier to creating proper workflows is the perceived upfront cost. If you had to have perfectly commented and tested code from the start with fully documented data you'd work for hours before even beginning to answer your actual scientific questions. Instead, I suggest spending relatively more effort on the important workflows. As a project matures, you have a better idea of what clean data files would be nice to have and which figures you use regularly. When you recognize these things, take some time to clean them up.
+
+## Organizing your Data Files
+
+- Unless you are dealing with more than 1GB of data, save yourself the trouble of managing various files and keep all your clean data in a single file (preferably a csv file or other format that can be read easily by various programs). Please don't make me open up MATLAB to process your 20 mat files.
+
+- Keep your raw data in ["tidy" format](https://vita.had.co.nz/papers/tidy-data.pdf) so that columns are single features that describe each case, which make up the rows. I usually create a single csv file where every trial from every subject in my experiment is a row with columns that describe the experiment conditions and relevant measures.
+
+- **Don't use arbitrary numbers or shorthand to represent data.** Don't have a condition column with values like 11, 12, 21, and 22. Instead, create a separate column for each of the factors in your design and use meaningful text as values in those columns. I don't want to go read your README to figure out what these columns mean, please put the information directly into your file.
+
+- File names should be identifying, but put metadata in the file as well. Please don't make me parse your file names with regex to get subject numbers.
+
+The benefit of these tips will not just make your data easier to understand, it will make your code easier to understand. With all of your data cleaning hidden away, reading the data for your analysis becomes a single line of code. Instead of `if condition == 11`, your code will directly relate to the concepts relevant to the analysis with no comments needed.
+
+## Tips for Clean Code
+
+- While fully testing your code which has been packaged into a library is a nice ideal, it might simply be enough to print out some expected results as part of your analysis. In my files I tend to print out things like the number of subjects I loaded in or the number of trials per subject, along with a comment of whatever I think the value should be. This meets the same goal of notifying you if something is off with significantly less effort.
+
+- Use relative paths, e.g. `../data/raw.csv`, instead of absolute paths, e.g. `/Users/Colin/experiments/my_experiment/data/raw.csv`. If you use R, you can create an R project to automatically set your working directory to the top level of your project. Regardless, because you have a consistent setup, you always know where your current file is relative to everything else. This will prevent all your code from breaking if you move your folder or change the name of a higher level directory and it means that I can run all your code if I download the entire directory structure.
+
+- Ideally all of your code should run top to bottom and it should be possible to create every output (clean data, figures, statistics) by running a piece of code. That means your notebooks should run in order and you should avoid excel or other manual processes if possible.^[If you do prefer excel, at least use formulas so that it's clear what operations were performed.] If not, at least take care to make all of your analyses around that process reproducible by code. In a year, you won't remember the order you ran the cells in or what you did in excel to get a particular result.
+
+- Comments in your code should be used to explain why a certain operation was performed or details about strange operations. Do not use comments to explain basic syntax that would be easy to look up again or you risk having so many comments the important information gets lost. If you find yourself working to understand how a certain piece of code works consider rewriting it. If you can't, leave a comment.
+
+- Use self documenting names for variables. Take an extra moment when creating variables to given them a name that will be meaningful even a year from now.
+
+The key idea here is that code becomes your documentation. The problem with relying on comments and notes is that if you make a change in the code they can easily become out of date. The only 100% true record of the operations being performed is the code being run. That's not to say that you should not use notes and comments, just that you should not rely on them. The most important thing to consider when trying to write readable code is the code itself.
+
+## Conclusion
+
+To sum up, you should organize your files so that you can easily navigate your directories, and the overall structure should be similar across all of your projects. Don't use shorthand or codes in your data when you could instead replace them with meaningful values. Try to make your code into documentation of your work.
+
+As mentioned above, these adopting these practices will also make it easy to share your data and analyses. At this point, I believe it is worth the effort to try to create READMEs that will help others understand the data. However, if you find yourself having to explain a significant amount of information in these files, consider if there are changes you could make to make things easier on yourself for future projects.
+
+I hope that these principles will help guide you towards more reproducible workflows. If you think I missed anything, let me know on twitter!
