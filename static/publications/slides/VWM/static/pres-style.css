@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&family=Roboto&display=swap');
+
+.bold {
+  font-weight: 900;
+}
+
+.cd-display {
+  left: 50%;
+  position: absolute;
+  top: 40%;
+  transform: translateX(-50%)
+}
+
+.cd-display img {
+  border: 2px solid black;
+}
+
+.footer {
+  left: 20px;
+  position: absolute;
+  top: 620px;
+}
+
+.footer-right {
+  left: 1050px;
+  position: absolute;
+  top: 620px;
+}
+
+.logo {
+  left: 800px;
+  position: absolute;
+  top: 300px;
+}
+
+.large {
+  font-size: 1.8em;
+}
+
+.medium {
+  font-size: 1.3em;
+}
+
+.mycenter {
+  left: 50%;
+  margin: auto;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.pre {
+  white-space: pre;
+}
+
+.slide-title {
+  font-family: roboto;
+  font-size: 35px;
+}
+
+.sm-logo {
+  position: relative;
+  top: 2px;
+}
+
+.space {
+  margin-bottom: 80px;
+  margin-top: 80px;
+}
+
+.remark-slide-content {
+  color: #222;
+  font-family: lato;
+}
+
+.remark-slide-number {
+  display: none;
+}
+
+.section {
+  font-size: 2.2em;
+  font-weight: 700;
+  position: relative;
+  text-align: center;
+  top: 50px;
+}
+
+.single-line {
+  line-height: 60%;
+}
+
+.subtitle {
+  font-size: 30px;
+  position: relative;
+  top: 150px;
+}
+
+.title {
+  font-family: roboto;
+  font-size: 45px;
+  line-height: 140%;
+  position: relative;
+  top: 75px;
+}
+
+.triple-line {
+  line-height: 250%;
+}
+
+.wr-display img {
+  border: 2px solid black;
+}
