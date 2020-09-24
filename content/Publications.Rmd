@@ -7,11 +7,9 @@ categories: []
 tags: []
 ---
 
-## Preprints
-
-[Accepted] Quirk, C., Adam, K. C. S., & Vogel, E. K. (2020, April 16). No Evidence for an Object Working Memory Capacity Benefit with Extended Viewing Time. [PDF](https://osf.io/pzy5q/)
-
 ## Peer-Reviewed Publications
+
+Quirk, C., Adam, K. C. S., & Vogel, E. K. (2020). No Evidence for an Object Working Memory Capacity Benefit with Extended Viewing Time. ENeuro, 7(5). https://doi.org/10.1523/ENEURO.0150-20.2020 [PDF](papers/Quirk_eneuro2020.pdf)
 
 Couperus, J. W., & Quirk, C. (2015). Visual search and the N2pc in children. Attention, Perception, & Psychophysics, 77(3), 768-776. ([PDF](papers/Couperus&Quirk_2015.pdf))
 
