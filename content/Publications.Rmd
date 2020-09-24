@@ -17,7 +17,7 @@ Couperus, J. W., & Quirk, C. (2015). Visual search and the N2pc in children. Att
 
 Quirk, C., Adam, K., Vogel, E. (June 2020). Preexisting spatial biases influence the encoding of information in visual working memory. Talk given at the Virtual Working Memory Symposium. ([SLIDES](slides/VWM/VWM_2020.html))
 
-Quirk, C., Adam, K., Vogel, E. (May 2018). Preexisting spatial biases influence the encoding of information in visual working memory. Talk given at the 18th Annual Meeting of the Visual Sciences Society, St. Pete Beach, FL. ([SLIDES](slides/VWM/QuirkVSS2018.pdf))
+Quirk, C., Adam, K., Vogel, E. (May 2018). Preexisting spatial biases influence the encoding of information in visual working memory. Talk given at the 18th Annual Meeting of the Visual Sciences Society, St. Pete Beach, FL. ([SLIDES](slides/QuirkVSS2018.pdf))
 
 ## Conference Posters
 
