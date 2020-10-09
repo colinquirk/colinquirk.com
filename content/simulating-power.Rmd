@@ -1,0 +1,236 @@
+---
+title: "A Case for Simulated Power Analyses"
+author: Colin Quirk
+date: '2020-10-08'
+slug: simulated-power
+categories: [statistics]
+tags: []
+---
+
+```{r setup, message=FALSE, echo=FALSE, warning=FALSE}
+library(tidyverse)
+
+theme_set(theme_minimal())
+
+knitr::opts_chunk$set(message=FALSE, echo=FALSE, warning=FALSE)
+
+set.seed(42)  # Get consistent results
+```
+
+When psychology students are taught power, they are often only shown the general concept. You talk about p-values, types of errors, and sample sizes and you work through a simple example with a t-test. Useful tools like G* power are mentioned and maybe even demoed. But, when it comes time to actually apply that concept to a real design with many different variables, doing a power analysis suddenly seems much more complicated. Here I am going to make the case that you should use simulations to calculate power as they are both more flexible and easier to understand. I am going to assume that you at least have a general understanding of the concepts mentioned above, but I will provide a basic recap in case you are a little rusty.
+
+## What is Power?
+
+If you recall from your intro statistics class, a p-value is the probability of observing results as or more extreme than your own under the null hypothesis. If this probability is low enough (p < 0.05) we conclude that we were unlikely to observe our results by chance and reject the null. Of course, it is always possible that we are incorrect. Sometimes, even though there is only a 5% chance our data would have come from the null model, we happen to hit that 5% and reject the null when we shouldn't. This is a type I error or a false positive. Alternatively, there could be a real effect, but we end up with a p-value greater than 0.05 and fail to reject the null. This is a type II error or a false negative.
+
+Our chance of making a type I error is fixed according to the value at which we choose to reject our null, also known as alpha (0.05). However, by increasing our power we do have control over how often we make type II errors! Higher power means fewer failures to reject incorrect nulls. Generally speaking we can increase our power in two ways: decreasing noise and increasing sample size. This is where I assume most people are at in their understanding of power, along with knowledge of a tool that you can use to calculate it. But have you ever calculated power by hand?
+
+## A Low Level Example
+
+Let's look at an example where we compare IQ across two groups, each with a sample size of 10. We will calculate power for a t-test given the following population parameters. The first group has a true mean of 100 with a standard deviation of 15. The second group has a true mean of 112, also with a standard deviation of 15. Below we represent this in R.
+
+```{r echo=TRUE}
+g1_n = 10
+g1_mean = 100
+g1_sd = 15
+
+g2_n = 10
+g2_mean = 112
+g2_sd = 15
+```
+
+To go from these values to power, we need to calculate a standardized effect size for the difference between `g1_mean` and `g2_mean`. This can be calculated with the formula $ES = (mean_1 - mean_2) / sd_{pooled}$. In this example, we can simply state that the $sd_{pooled}$ is 15 as both groups have the same observed standard deviation and we have the same number of subjects in each group. With these values, we can now calculate our standardized effect size.
+
+```{r echo=TRUE}
+(effect_size = (g2_mean - g1_mean) / 15)
+```
+
+Let's pause for a second and recall our goal. We want to determine the probability that we detect an effect given a standardized effect size of 0.8. To do this, we first need to know how t-values are distributed under the null hypothesis. Any guesses? Hopefully you remember that t-values under the null follow the t-distribution (in this case, with a df equal to 18). But have you ever thought about how t-values are distributed under the alternative hypothesis? Is that even something we can determine?
+
+In fact, we do know how t-values are distributed under the alternative hypothesis and it is critical for these calculations. It turns out that under the alternative hypothesis, our t-values are distributed under a generalized form of the t-distribution called the noncentral t-distribution. This generalized t-distribution includes a parameter called the noncentrality parameter that allows the t-distribution to be centered somewhere other than 0. This makes sense because under our alternative hypothesis we are expecting some nonzero effect! Unlike the normal distribution, the t-distribution actually changes shape as a result of this parameter. I'm not going to show the formula to calculate the noncentrality parameter, but rest assured it is straightforward once you have a standardized effect size and sample sizes ^[If you are interested in all the gory details, you can always check the code on [github](https://github.com/colinquirk/colinquirk.com). ]. Instead, let's plot both of these distributions and take a look at them.
+
+```{r}
+alpha = 0.05
+deg_f = 18
+
+critical_t = qt(1 - (alpha / 2), deg_f)
+ncp = effect_size * sqrt(g1_n * g2_n / (g1_n + g2_n))
+
+x = seq(-4, 6, length.out = 1000)
+ny = dt(x, deg_f)
+ay = dt(x, deg_f, ncp = ncp)
+
+data = data.frame(x = x, ny = ny, ay = ay)
+
+ggplot(data, aes(x = x)) +
+  geom_path(aes(y = ny), color='blue') +
+  geom_path(aes(y = ay), color='red') +
+  geom_vline(xintercept = critical_t) +
+  stat_function(fun = dt, 
+                xlim = c(critical_t, 6),
+                geom = "area",
+                args = c(df = deg_f, ncp=ncp),
+                alpha = 0.25) +
+  labs(x="t-value", y="")
+```
+
+The blue line represents our distribution of t-values under the null hypothesis and our red line represents our distribution of t-values under the alternative hypothesis. Because there is noise, there is some overlap in our two distributions (a larger effect size leads to less overlap). So how do we decide where to draw the line between concluding we have a t-value from the null or the alternative distribution? We draw that line (represented here by the literal black line on the plot) at our critical t-value, the 97.5th percentile of the blue distribution (for a two-tailed test). Right of that line is the 2.5% type I error rate that we are willing to accept in that direction.
+
+What then is the grey area? That is the area under the alternative hypothesis where we correctly reject the null. That area represents our power! Ideally, we would have a lot of the area under the red distribution colored grey. That would mean that, most of the time, a t-value generated under the alternative hypothesis would lead to a proper rejection of the null. Based on this plot alone, what do you think our power is?
+
+```{r}
+alpha = 0.05
+critical_t = qt(1 - (alpha / 2), deg_f)  # alpha / 2 for a 2 sided test
+# This is beyond the course, but feel free to read up on the distribution of a test statistic
+# when the null is false and how that relates to the noncentrality parameter.
+# You could find this particular formula online, e.g. in GPower's docs
+ncp = effect_size * sqrt(g1_n * g2_n / (g1_n + g2_n))
+
+power = 1 - pt(critical_t, deg_f, ncp)
+```
+
+As less than half of the red distribution is colored grey, we should expect our power to be a bit less than 50%. In fact, if you calculate the area of the distribution that is colored grey you get a value of 0.395. Luckily, this is the exact value that you get when you do a power calculation using R, G*Power or an online calculator.
+
+## Let's Try Some Simulation
+
+So that's all well and good, but you don't really need to know all that to plug some numbers into a calculator, right? The goal here was just to help give some intuition about what is actually going on under the hood. Now that we have a basic idea about what we are actually trying to accomplish, we can try to replicate these results using simulation. Remember, all we really care about is the percent of that red distribution that is grey and all the other math we had to do along the way was simply moving us towards that final goal. Simulation gives us a simple way of estimating the size of that grey area without all the math it took to get there.
+
+The way this simulation is going to work will be fairly straightforward. We will start by creating a function that generates some random data for us with a specific difference between our two groups. We will then run this function many times and generate many possible datasets and perform a t-test on all of them. To get our power, we will calculate the number of tests that resulted in a significant value. If this works, that number will be close to the number we got from our by-hand approach. Let's start by creating our function.
+
+```{r echo=TRUE}
+get_sample_data = function(n1, m1, sd1, n2, m2, sd2) {
+  data.frame(
+    group1 = rnorm(n1, m1, sd1),
+    group2 = rnorm(n2, m2, sd2)
+  )
+}
+```
+
+Our function `get_sample_data` will return a dataframe of random data using the population parameters that we defined. Let's test it.
+
+```{r echo=TRUE}
+(test_data = get_sample_data(10, 100, 15, 10, 112, 15))
+```
+
+Next, we need a function that takes in this data and performs a t-test on it. If that t-test returns a significant p-value, we will return `TRUE`.
+
+```{r echo=TRUE}
+test_sample_data = function(data){
+  t.test(data$group1, data$group2)$p.value < 0.05
+}
+
+test_sample_data(test_data)
+```
+
+To run it many times, we can use the `replicate` function.
+
+```{r echo=TRUE}
+simulation_results = replicate(1e4, test_sample_data(get_sample_data(10, 100, 15, 10, 112, 15)))
+head(simulation_results)
+```
+
+Now all we have to do is calculate the proportion of tests that resulted in a significant value.
+
+```{r echo=TRUE}
+mean(simulation_results)
+```
+
+Pretty close to our hand calculated value, and hopefully a lot easier to wrap your head around! And, now that you have these functions, it is easy to vary the parameters to see how power changes with both n and effect size.
+
+```{r}
+sample_sizes = c(3, 5, 8, 10, 15, 20, 30, 50, 75, 100, 150)
+
+es_04 = lapply(sample_sizes, function(n) {mean(replicate(1e3, test_sample_data(get_sample_data(n, 100, 15, n, 106, 15))))})
+es_08 = lapply(sample_sizes, function(n) {mean(replicate(1e3, test_sample_data(get_sample_data(n, 100, 15, n, 112, 15))))})
+es_14 = lapply(sample_sizes, function(n) {mean(replicate(1e3, test_sample_data(get_sample_data(n, 100, 15, n, 121, 15))))})
+
+power = data.frame(SampleSize=c(0, sample_sizes), es_04=c(0, unlist(es_04)), es_08=c(0, unlist(es_08)), es_14=c(0, unlist(es_14))) %>% 
+  pivot_longer(cols=es_04:es_14, names_to="EffectSize", values_to="Power") %>% 
+  mutate(EffectSize = factor(recode(EffectSize, es_04=0.4, es_08=0.8, es_14=1.4)))
+
+ggplot(power, aes(x=SampleSize, y=Power, color=EffectSize, group=EffectSize)) +
+  geom_hline(yintercept=0.8) +
+  geom_line() +
+  geom_point()
+```
+
+Of course, this is just the beginning. Let's look at a more complex example where simulation can really shine.
+
+## A Real Life Example
+
+For this example, I'm going to do an anova using the [palmerpenguins dataset](https://allisonhorst.github.io/palmerpenguins/). We will see how the body mass of these penguins vary based upon their species and sex while controlling for flipper length.
+
+```{r}
+library(palmerpenguins)
+
+penguins = penguins %>% 
+  drop_na() %>% 
+  select(body_mass_g, flipper_length_mm, species, sex)
+
+ggplot(penguins, aes(y = body_mass_g, x = flipper_length_mm, color=species, shape=species)) +
+  facet_wrap(~sex) +
+  geom_point()
+```
+
+```{r echo=TRUE}
+anova(lm(body_mass_g ~ flipper_length_mm + species * sex, data=penguins))
+```
+
+As we can see, we have a number of highly significant effects in our anova. Let's say that you have access to this dataset and are planning a follow-up study and want to know if you can get away with collecting fewer penguins this time. You are interested in each of the individual coefficients and the interaction between species and sex. How would you go about performing a power analysis to see how many penguins you should collect in your follow-up? My guess is that many psychology students would have trouble in this situation. Even this task [can be confusing](https://stats.idre.ucla.edu/other/gpower/multiple-regression-power-analysis/) using tools like G*Power or R's pwr package. Instead, let's set up functions that generate random subsets of the data and run our test just like before.
+
+```{r echo=TRUE}
+get_penguins = function(n) {
+  penguins %>% 
+    group_by(species, sex) %>% 
+    sample_n(n)
+}
+
+get_penguins(1)
+```
+
+This time we make sure to have a given number of penguins from each species and sex combination, but other than that this is very similar. Now we can create a function that returns a TRUE or FALSE for each of the coefficients in our anova.
+
+```{r echo=TRUE}
+do_anova = function(data) {
+  fit = anova(lm(body_mass_g ~ flipper_length_mm + species * sex, data=data))
+  (fit$`Pr(>F)` < 0.05)[1:4]
+}
+
+do_anova(get_penguins(3))
+```
+
+And now we can use `replicate` like before to assess power for any sample size we are interested in.
+
+```{r echo=TRUE}
+n_per_group = 5
+simulation_results = replicate(1e3, do_anova(get_penguins(n_per_group)))
+head(t(simulation_results))
+```
+
+```{r}
+sample_sizes = c(3, 5, 8, 10, 15, 20, 25)
+
+penguin_power = data.frame(t(sapply(sample_sizes, function(n) {rowMeans(replicate(1e3, do_anova(get_penguins(n))))})))
+colnames(penguin_power) = c("FlipperLength", "Species", "Sex", "Interaction")
+
+penguin_power = penguin_power %>% 
+  mutate(SampleSize = sample_sizes) %>% 
+  add_row(SampleSize=0, FlipperLength=0, Species=0, Sex=0, Interaction=0) %>% 
+  pivot_longer(cols=FlipperLength:Interaction, names_to="Effect", values_to="Power")
+
+ggplot(penguin_power, aes(x=SampleSize, y=Power, color=Effect, group=Effect)) +
+  geom_hline(yintercept=0.8) +
+  geom_line() +
+  geom_point()
+```
+
+Just like that, we have a clear way of calculating power from our data! But what if you don't have data to sample from? The cool thing about this approach is that it will work with any data generation process and any statistical test. If you don't have a dataset to use, you can just generate data randomly with any effects you want like our first example.
+
+## Further Reading
+
+Thanks for reading! I hope you found this post interesting. If you did, you might also be interested in these additional resources:
+
+ - https://cran.r-project.org/web/packages/paramtest/vignettes/Simulating-Power.html
+ - https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/1471-2288-11-94
+ - https://kcsadam.files.wordpress.com/2018/06/xuadamfangvogel_behresmethods_final.pdf
+ 
