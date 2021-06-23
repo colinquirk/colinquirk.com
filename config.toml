@@ -43,10 +43,10 @@ enableEmoji = true
     url = "http://osf.io/b3esa/"
     weight = 5
 [[menu.main]]
-    name = "CV"
-    url = "/quirk_cv.pdf"
+    name = "Resume"
+    url = "/Quirk_Resume.pdf"
     weight = 6
 [[menu.main]]
     name = "Email me"
-    url = "mailto:cquirk@uchicago.edu"
+    url = "mailto:colin.quirk@sparkneuro.com"
     weight = 6
