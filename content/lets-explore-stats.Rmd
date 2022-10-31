@@ -1,0 +1,18 @@
+---
+title: "My Unfinshed, Interactive Statistics Textbook"
+author: Colin Quirk
+date: '2022-10-31'
+output: lets-explore-stats
+categories: [misc]
+tags: []
+---
+
+This will be a short post because the point is basically to just put this link out into the world: https://bookdown.org/cquirk/LetsExploreStatistics/
+
+"Let's Explore Statistics" is designed to teach statistical concepts to beginners via instructive simulations. Of course, I am not the first person to have this idea. All throughout the internet you can find hundreds of simulations that are designed to help one gain an intuition for some statistical concept. And, if fact, you can even find free textbooks available online that incorporate simulations into their teaching (https://onlinestatbook.com/ is one).
+
+What I believe makes "Let's Explore Statistics" special is that the simulations are built directly into the text and are each designed to be consumed and understood in under 30 seconds. Many other widgets available provide all sorts of knobs and buttons for learners to play with in the hopes the students will spend time deeply exploring the concept at hand. In my opinion, these widgets lack the guidance required for proper instruction. I believe the that interactive elements in this book are as efficient as possible in illustrating the concept being explained and will therefore actually be used by the student.
+
+I started writing "Let's Explore Statistics" in the beginning of 2020. Unfortunately, a small disruption called COVID made it very difficult to continue work on it. I have not yet given up though, one day I do plan to return to my textbook and give it the attention that it deserves (and I hope to return to my Youtube channel one day as well!). For now though, I simply don't have the time or desire to continue to work on it and so I am sharing it in it's unfinished state in the hopes that perhaps someone will at least find the first chapters useful. If you do stumble across this page and find the text useful, please reach out as it may motivate me to continue work on it.
+
+Check out the [github repo](https://github.com/colinquirk/LetsExploreStatistics) if you are interested in seeing how it works under the hood. The short version is that the book itself is written in using the R packaage bookdown, whereas the interactive elements are created with javascript and D3.js.
